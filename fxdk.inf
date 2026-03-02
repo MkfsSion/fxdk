@@ -1,0 +1,53 @@
+;
+; fxdk.inf
+;
+
+[Version]
+Signature   = "$WINDOWS NT$"
+Class       = DiskDrive
+ClassGuid   = {4D36E967-E325-11CE-BFC1-08002BE10318}
+Provider    = %ProviderName%
+CatalogFile = fxdk.cat
+DriverVer   = 
+PnpLockdown = 1
+
+[DestinationDirs]
+DefaultDestDir = 13
+
+[SourceDisksNames]
+1 = %DiskName%,,,""
+
+[SourceDisksFiles]
+fxdk.sys  = 1,,
+
+;*****************************************
+; Install Section
+;*****************************************
+[DefaultInstall.NT$ARCH$]
+CopyFiles = File_Copy
+
+[File_Copy]
+fxdk.sys
+
+;-------------- Service installation
+[DefaultInstall.NT$ARCH$.Services]
+AddService = fxdk,, fxdk_Service_Inst
+
+; -------------- fxdk driver install sections
+[fxdk_Service_Inst]
+DisplayName    = %fxdk.SVCDESC%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %13%\fxdk.sys
+
+[DefaultInstall.NT$ARCH$.Wdf]
+KmdfService = fxdk, fxdk_wdfsect
+
+[fxdk_wdfsect]
+KmdfLibraryVersion = $KMDFVERSION$
+
+[Strings]
+ProviderName = "MkfsSion"
+DiskName = "Fixed Disk Installation Disk"
+fxdk.SVCDESC = "Fixed Disk lower filter driver"
